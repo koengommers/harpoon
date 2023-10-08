@@ -4,6 +4,7 @@ local entry_display = require("telescope.pickers.entry_display")
 local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local conf = require("telescope.config").values
+local utils = require("telescope.utils")
 local harpoon = require("harpoon")
 local harpoon_mark = require("harpoon.mark")
 
@@ -23,20 +24,31 @@ local generate_new_finder = function()
     return finders.new_table({
         results = prepare_results(harpoon.get_mark_config().marks),
         entry_maker = function(entry)
-            local line = entry.filename .. ":" .. entry.row .. ":" .. entry.col
+            local line, hl_group, icon = utils.transform_devicons(
+                entry.filename,
+                entry.filename .. ":" .. entry.row .. "." .. entry.col
+            )
             local displayer = entry_display.create({
                 separator = " - ",
                 items = {
                     { width = 2 },
-                    { width = 50 },
                     { remaining = true },
                 },
             })
             local make_display = function()
-                return displayer({
+                local display = displayer({
                     tostring(entry.index),
-                    line,
+                    line
                 })
+
+                local icon_start = #tostring(entry.index) + 4
+                local icon_end = icon_start + #icon
+
+                if hl_group then
+                    return display, { { { icon_start, icon_end }, hl_group } }
+                else
+                    return display
+                end
             end
             return {
                 value = entry,
