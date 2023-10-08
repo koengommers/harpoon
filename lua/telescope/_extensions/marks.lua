@@ -123,10 +123,8 @@ return function(opts)
             map("i", "<c-d>", delete_harpoon_mark)
             map("n", "<c-d>", delete_harpoon_mark)
 
-            map("i", "<c-p>", move_mark_up)
             map("n", "<c-p>", move_mark_up)
 
-            map("i", "<c-n>", move_mark_down)
             map("n", "<c-n>", move_mark_down)
             return true
         end,
